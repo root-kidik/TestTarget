@@ -1,36 +1,37 @@
 #include "hello_client.hpp"
 
-#include <fmt/format.h>
-
 #include <userver/yaml_config/merge_schemas.hpp>
 
-namespace pg_grpc_service_template {
+#include <fmt/format.h>
 
-std::string HelloClient::SayHello(std::string name) {
-  handlers::api::HelloRequest request;
-  request.set_name(std::move(name));
+namespace pg_grpc_service_template
+{
 
-  // Deadline must be set manually for each RPC
-  auto context = std::make_unique<grpc::ClientContext>();
-  context->set_deadline(
-      userver::engine::Deadline::FromDuration(std::chrono::seconds{20}));
+std::string HelloClient::SayHello(std::string name)
+{
+    handlers::api::HelloRequest request;
+    request.set_name(std::move(name));
 
-  // Initiate the RPC. No actual actions have been taken thus far besides
-  // preparing to send the request.
-  auto stream = client_.SayHello(request, std::move(context));
+    // Deadline must be set manually for each RPC
+    auto context = std::make_unique<grpc::ClientContext>();
+    context->set_deadline(userver::engine::Deadline::FromDuration(std::chrono::seconds{20}));
 
-  // Complete the unary RPC by sending the request and receiving the response.
-  // The client should call `Finish` (in case of single response) or `Read`
-  // until `false` (in case of response stream), otherwise the RPC will be
-  // cancelled.
-  handlers::api::HelloResponse response = stream.Finish();
+    // Initiate the RPC. No actual actions have been taken thus far besides
+    // preparing to send the request.
+    auto stream = client_.SayHello(request, std::move(context));
 
-  return std::move(*response.mutable_text());
+    // Complete the unary RPC by sending the request and receiving the response.
+    // The client should call `Finish` (in case of single response) or `Read`
+    // until `false` (in case of response stream), otherwise the RPC will be
+    // cancelled.
+    handlers::api::HelloResponse response = stream.Finish();
+
+    return std::move(*response.mutable_text());
 }
 
-userver::yaml_config::Schema HelloClient::GetStaticConfigSchema() {
-  return userver::yaml_config::MergeSchemas<
-      userver::components::LoggableComponentBase>(R"(
+userver::yaml_config::Schema HelloClient::GetStaticConfigSchema()
+{
+    return userver::yaml_config::MergeSchemas<userver::components::LoggableComponentBase>(R"(
 type: object
 description: >
     a user-defined wrapper around api::GreeterServiceClient that provides
@@ -44,8 +45,9 @@ properties:
 )");
 }
 
-void AppendHelloClient(userver::components::ComponentList& component_list) {
-  component_list.Append<HelloClient>();
+void AppendHelloClient(userver::components::ComponentList& component_list)
+{
+    component_list.Append<HelloClient>();
 }
 
-}  // namespace pg_grpc_service_template
+} // namespace pg_grpc_service_template

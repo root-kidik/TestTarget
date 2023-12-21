@@ -10,18 +10,18 @@
 #include "hello.hpp"
 #include "hello_client.hpp"
 
-int main(int argc, char* argv[]) {
-  auto component_list =
-      userver::components::MinimalServerComponentList()
-          .Append<userver::ugrpc::server::ServerComponent>()
-          .Append<userver::ugrpc::client::ClientFactoryComponent>()
-          .Append<userver::server::handlers::Ping>()
-          .Append<userver::components::TestsuiteSupport>()
-          .Append<userver::components::HttpClient>()
-          .Append<userver::server::handlers::TestsControl>();
+int main(int argc, char* argv[])
+{
+    auto component_list = userver::components::MinimalServerComponentList()
+                              .Append<userver::ugrpc::server::ServerComponent>()
+                              .Append<userver::ugrpc::client::ClientFactoryComponent>()
+                              .Append<userver::server::handlers::Ping>()
+                              .Append<userver::components::TestsuiteSupport>()
+                              .Append<userver::components::HttpClient>()
+                              .Append<userver::server::handlers::TestsControl>();
 
-  pg_grpc_service_template::AppendHello(component_list);
-  pg_grpc_service_template::AppendHelloClient(component_list);
+    pg_grpc_service_template::AppendHello(component_list);
+    pg_grpc_service_template::AppendHelloClient(component_list);
 
-  return userver::utils::DaemonMain(argc, argv, component_list);
+    return userver::utils::DaemonMain(argc, argv, component_list);
 }
